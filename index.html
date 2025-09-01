@@ -56,6 +56,7 @@
             color: var(--accent-color);
             margin-bottom: 20px;
             font-weight: 700;
+            font-size: 2.5rem;
         }
 
         .balance-card {
@@ -84,13 +85,15 @@
             color: var(--accent-color);
         }
 
-        .input-group {
+        .input-group, .filter-group {
             display: flex;
             gap: 10px;
             margin-bottom: 25px;
+            flex-wrap: wrap; /* Permite que os itens quebrem a linha */
         }
 
-        .input-group input, .input-group button, .input-group select {
+        .input-group input, .input-group button, .input-group select,
+        .filter-group input, .filter-group select {
             flex: 1;
             padding: 12px;
             border-radius: 8px;
@@ -105,7 +108,8 @@
             cursor: pointer;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group input:focus, .input-group select:focus,
+        .filter-group input:focus, .filter-group select:focus {
             outline: none;
             box-shadow: 0 0 0 2px var(--accent-color);
         }
@@ -123,22 +127,6 @@
             transform: scale(1.05);
         }
         
-        .filter-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .filter-group select, .filter-group input {
-            background-color: #3b4269;
-            color: var(--text-color);
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            cursor: pointer;
-        }
-
         .history-section {
             text-align: left;
         }
@@ -254,6 +242,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0; /* Impede que o ícone de bateria encolha */
         }
 
         .progress-bar {
@@ -285,6 +274,49 @@
             border-top-right-radius: 5px;
             border-bottom-right-radius: 5px;
         }
+
+        /* Media Queries para responsividade */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .balance-card {
+                padding: 15px;
+            }
+
+            .total-amount {
+                font-size: 2rem;
+            }
+
+            .input-group, .filter-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .input-group button,
+            .filter-group select, .filter-group input {
+                width: 100%;
+            }
+
+            .history-item {
+                padding: 12px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .item-details {
+                margin-bottom: 5px;
+            }
+
+            .delete-btn {
+                align-self: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
@@ -302,7 +334,7 @@
         <div class="progress-bar-container">
             <div class="progress-bar" id="progressBar"></div>
             <div class="progress-percentage" id="progressPercentage">0%</div>
-        </div>
+            </div>
     </div>
     
     <div class="balance-card">
