@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gasolina do Mês</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --background: #1a1a2e;
+            --card-background: #232946;
+            --text-color: #e4e4e4;
+            --accent-color: #e94560;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --border-radius: 15px;
+            --progress-bar-bg: #4b5278;
+            --progress-color-low: #a1ff6a;
+            --progress-color-high: #e94560;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .balance-card {
+            background-color: #2e355c;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .balance-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .balance-card h2 {
+            font-weight: 400;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+
+        .total-amount {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .input-group input, .input-group button, .input-group select {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #3b4269;
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: box-shadow 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .input-group button {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .input-group button:hover {
+            background-color: #c93b51;
+            transform: scale(1.05);
+        }
+        
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .filter-group select, .filter-group input {
+            background-color: #3b4269;
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .history-section {
+            text-align: left;
+        }
+
+        .history-section h2 {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .month-history {
+            margin-bottom: 20px;
+            background-color: #2e355c;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .month-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        .month-total {
+            font-size: 1.2rem;
+            color: #a1ff6a;
+            font-weight: 700;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #3b4269;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            animation: slideIn 0.5s ease-out;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .history-item:hover {
+            background-color: #4b5278;
+            transform: translateX(5px);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-value {
+            font-weight: 600;
+            color: #e4e4e4;
+        }
+
+        .item-date {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #e94560;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            color: #c93b51;
+        }
+
+        /* Estilos da barra de progresso */
+        .progress-container-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-container {
+            width: 150px;
+            height: 50px;
+            background-color: var(--progress-bar-bg);
+            border: 3px solid var(--text-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--progress-color-low);
+            transition: width 0.5s ease-in-out, background-color 0.5s ease-in-out;
+            border-radius: 5px;
+        }
+
+        .progress-bar-over-limit {
+            background-color: var(--progress-color-high);
+        }
+
+        .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .battery-cap {
+            width: 10px;
+            height: 25px;
+            background-color: var(--text-color);
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gasolina do Mês</h1>
+
+    <div class="input-group">
+        <input type="number" id="monthlyGoal" placeholder="Meta de gasto (R$)" step="0.01">
+        <button id="setGoalButton">Definir Meta</button>
+    </div>
+
+    <div class="progress-container-wrapper">
+        <div class="progress-label">Meta do Mês: <span id="goalValue">R$ 0,00</span></div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-percentage" id="progressPercentage">0%</div>
+        </div>
+    </div>
+    
+    <div class="balance-card">
+        <h2>Total Gasto</h2>
+        <div class="total-amount" id="totalAmount">R$ 0,00</div>
+    </div>
+
+    <div class="input-group">
+        <input type="number" id="gasolineInput" placeholder="Valor em R$" step="0.01">
+        <button id="addButton">Adicionar</button>
+    </div>
+
+    <div class="filter-group">
+        <select id="monthFilter">
+            <option value="all">Todos os Meses</option>
+            <option value="0">Janeiro</option>
+            <option value="1">Fevereiro</option>
+            <option value="2">Março</option>
+            <option value="3">Abril</option>
+            <option value="4">Maio</option>
+            <option value="5">Junho</option>
+            <option value="6">Julho</option>
+            <option value="7">Agosto</option>
+            <option value="8">Setembro</option>
+            <option value="9">Outubro</option>
+            <option value="10">Novembro</option>
+            <option value="11">Dezembro</option>
+        </select>
+        <input type="number" id="yearFilter" placeholder="Ano" min="2000">
+    </div>
+
+    <div class="history-section">
+        <h2>Histórico</h2>
+        <div id="historyList">
+            </div>
+    </div>
+</div>
+
+<script>
+    const gasolineInput = document.getElementById('gasolineInput');
+    const addButton = document.getElementById('addButton');
+    const totalAmount = document.getElementById('totalAmount');
+    const historyList = document.getElementById('historyList');
+    const monthFilter = document.getElementById('monthFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const monthlyGoalInput = document.getElementById('monthlyGoal');
+    const setGoalButton = document.getElementById('setGoalButton');
+    const goalValueElement = document.getElementById('goalValue');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercentage = document.getElementById('progressPercentage');
+
+    // Carrega os dados do localStorage ao iniciar
+    let records = JSON.parse(localStorage.getItem('gasolineRecords')) || [];
+    let monthlyGoal = parseFloat(localStorage.getItem('monthlyGoal')) || 0;
+    
+    // Define o ano atual como valor padrão e o mês atual
+    const today = new Date();
+    yearFilter.value = today.getFullYear();
+    monthFilter.value = today.getMonth();
+
+    function updateDisplay() {
+        const selectedMonth = monthFilter.value;
+        const selectedYear = yearFilter.value;
+
+        // Filtra os registros com base no mês e ano selecionados
+        const filteredRecords = records.filter(record => {
+            const date = new Date(record.date);
+            return (selectedMonth === 'all' || date.getMonth() === parseInt(selectedMonth)) && date.getFullYear() === parseInt(selectedYear);
+        });
+        
+        const total = filteredRecords.reduce((sum, record) => sum + record.value, 0);
+        totalAmount.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        renderHistory(filteredRecords);
+        updateProgressBar(total);
+    }
+
+    function updateProgressBar(currentTotal) {
+        goalValueElement.textContent = `R$ ${monthlyGoal.toFixed(2).replace('.', ',')}`;
+
+        if (monthlyGoal <= 0) {
+            progressBar.style.width = '0%';
+            progressPercentage.textContent = '0%';
+            progressBar.classList.remove('progress-bar-over-limit');
+            return;
+        }
+
+        const percentage = Math.min((currentTotal / monthlyGoal) * 100, 100);
+        const displayPercentage = Math.round((currentTotal / monthlyGoal) * 100);
+
+        progressBar.style.width = `${percentage}%`;
+        progressPercentage.textContent = `${displayPercentage}%`;
+
+        // Altera a cor se ultrapassar o limite
+        if (currentTotal > monthlyGoal) {
+            progressBar.classList.add('progress-bar-over-limit');
+        } else {
+            progressBar.classList.remove('progress-bar-over-limit');
+        }
+    }
+
+    function renderHistory(recordsToRender) {
+        historyList.innerHTML = '';
+        if (recordsToRender.length === 0) {
+            historyList.innerHTML = '<p style="text-align: center; color: #999;">Nenhum registro encontrado para este período.</p>';
+            return;
+        }
+
+        const historyByMonth = recordsToRender.reduce((acc, record) => {
+            const date = new Date(record.date);
+            const monthYear = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+            if (!acc[monthYear]) {
+                acc[monthYear] = [];
+            }
+            acc[monthYear].push(record);
+            return acc;
+        }, {});
+
+        for (const month in historyByMonth) {
+            const monthDiv = document.createElement('div');
+            monthDiv.classList.add('month-history');
+            
+            const monthTotal = historyByMonth[month].reduce((sum, record) => sum + record.value, 0);
+
+            const monthTitle = document.createElement('div');
+            monthTitle.classList.add('month-title');
+            monthTitle.innerHTML = `
+                <span>${month.charAt(0).toUpperCase() + month.slice(1)}</span>
+                <span class="month-total">R$ ${monthTotal.toFixed(2).replace('.', ',')}</span>
+            `;
+            monthDiv.appendChild(monthTitle);
+
+            const ul = document.createElement('ul');
+            ul.classList.add('history-list');
+
+            historyByMonth[month].forEach(record => {
+                const li = document.createElement('li');
+                li.classList.add('history-item');
+                li.innerHTML = `
+                    <div class="item-details">
+                        <span class="item-value">R$ ${record.value.toFixed(2).replace('.', ',')}</span>
+                        <span class="item-date">${new Date(record.date).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <button class="delete-btn" data-id="${record.id}">&times;</button>
+                `;
+                ul.appendChild(li);
+            });
+
+            monthDiv.appendChild(ul);
+            historyList.appendChild(monthDiv);
+        }
+    }
+
+    function addRecord() {
+        const value = parseFloat(gasolineInput.value);
+        if (isNaN(value) || value <= 0) {
+            alert('Por favor, insira um valor válido.');
+            return;
+        }
+
+        const newRecord = {
+            id: Date.now(),
+            value: value,
+            date: new Date().toISOString()
+        };
+
+        records.unshift(newRecord);
+        localStorage.setItem('gasolineRecords', JSON.stringify(records));
+
+        gasolineInput.value = '';
+        updateDisplay();
+    }
+
+    function deleteRecord(id) {
+        records = records.filter(record => record.id !== id);
+        localStorage.setItem('gasolineRecords', JSON.stringify(records));
+        updateDisplay();
+    }
+
+    function setMonthlyGoal() {
+        const goal = parseFloat(monthlyGoalInput.value);
+        if (isNaN(goal) || goal < 0) {
+            alert('Por favor, insira uma meta válida.');
+            return;
+        }
+        monthlyGoal = goal;
+        localStorage.setItem('monthlyGoal', monthlyGoal);
+        updateDisplay();
+    }
+
+    // Eventos
+    addButton.addEventListener('click', addRecord);
+    setGoalButton.addEventListener('click', setMonthlyGoal);
+    monthlyGoalInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') setMonthlyGoal();
+    });
+
+    monthFilter.addEventListener('change', updateDisplay);
+    yearFilter.addEventListener('change', updateDisplay);
+
+    historyList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+            const recordId = parseInt(e.target.dataset.id);
+            if (confirm('Tem certeza que deseja excluir este registro?')) {
+                deleteRecord(recordId);
+            }
+        }
+    });
+
+    // Inicializa o valor da meta e a exibição ao carregar
+    monthlyGoalInput.value = monthlyGoal > 0 ? monthlyGoal : '';
+    updateDisplay();
+</script>
+
+</body>
+</html>
